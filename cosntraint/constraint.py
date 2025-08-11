@@ -1,7 +1,8 @@
 import pygame
-from object.point import distance 
-from object.point import Point
 import clock
+from typing import Optional
+from object.point import distance, Point 
+from object.segment import Segment
 
 def associate_constraint(constraint, *objects):
     """Associate  constraint with objects."""
@@ -17,12 +18,11 @@ def distance_constraint(point1: Point,
 
     p1_to_p2_vector = pygame.math.Vector2(point2.x - point1.x, point2.y - point1.y)
     p1_to_p2_vector_normalized = p1_to_p2_vector.normalize() 
-    point_speed_px_per_s = error / 2   # speed in pixels per second
+    point_speed_px_per_s = error + 100 # TODO: find flexible way to set the speed
     seconds_since_last_frame = clock.DELTA_TIME 
 
     if error > tolerance:
         if actual_distance > demanded_distance:
-            # point1.x += p1_to_p2_vector.x * (error / 2) 
             point1.x += p1_to_p2_vector_normalized.x * point_speed_px_per_s * seconds_since_last_frame
             point1.y += p1_to_p2_vector_normalized.y * point_speed_px_per_s * seconds_since_last_frame
             point2.x -= p1_to_p2_vector_normalized.x * point_speed_px_per_s * seconds_since_last_frame
@@ -32,3 +32,33 @@ def distance_constraint(point1: Point,
             point1.y -= p1_to_p2_vector_normalized.y * point_speed_px_per_s * seconds_since_last_frame
             point2.x += p1_to_p2_vector_normalized.x * point_speed_px_per_s * seconds_since_last_frame
             point2.y += p1_to_p2_vector_normalized.y * point_speed_px_per_s * seconds_since_last_frame
+
+# TODO: Important!!! fix a point with respect to a specific axis
+def fix_point_constraint(point: Point, fixed_phantom_point: Optional[Point] = None):
+    """Fix a point at a specific position."""
+
+    if fixed_phantom_point is not None and fixed_phantom_point.isPhantom:
+        point.x = fixed_phantom_point.x
+        point.y = fixed_phantom_point.y
+
+    point.isFixed = True
+
+
+def angle_between_segments_constraint(segment: Segment, 
+                                                angleDegree: float, 
+                                                tolerance=2):
+    """Keep the segment at a specific angle with respect to the horizon. Angle is in degrees."""
+    pass
+
+    
+def fix_segment_constraint(segment: Segment, 
+                                    fixed_start_x: float, 
+                                    fixed_start_y: float, 
+                                    fixed_end_x: float, 
+                                    fixed_end_y: float, 
+                                    tolerance=2):
+    """Fix a segment at a specific position."""
+    
+    # the reason for not having a Segment object here is that 
+    # each new segment created is added to the set of live objects
+    pass
