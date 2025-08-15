@@ -1,0 +1,37 @@
+* Important Notes
+
+** =WHAT SHOULD BE THE SPEED OF CONVERGING OBJECTS?=
+** =Point constraint also with respect to one axis=
+
+** =Alternative ways to think= 
+
+*** Distance Constraint
+#+begin_src python 
+def distance_constraint(point1: Point, 
+                        point2: Point, 
+                        demanded_distance, 
+                        tolerance=2): # distance in pixel values
+    """Ensure the distance between two points is equal to a specified value."""
+  distance_error = distance(point1,point2) - demanded_distance
+
+  deriv_error_squared_at_x1 = -2 * (point2.x - point1.x)  # deriv of the error squared with respect to point1.x
+  deriv_error_squared_at_y1 = -2 * (point2.y - point1.y)
+
+  deriv_error_squared_at_x2 = 2 * (point2.x - point1.x)
+  deriv_error_squared_at_y2 = 2 * (point2.y - point1.y)
+
+  p1_maximizer_vector = pygame.math.Vector2(deriv_error_squared_at_x1, deriv_error_squared_at_y1)
+  p1_maximizer_vector_normalized = p1_maximizer_vector.normalize() if p1_maximizer_vector.length() >= tolerance else pygame.math.Vector2(0, 0)
+
+  p2_maximizer_vector = pygame.math.Vector2(deriv_error_squared_at_x2, deriv_error_squared_at_y2)
+  p2_maximizer_vector_normalized = p2_maximizer_vector.normalize() if p2_maximizer_vector.length() >= tolerance else pygame.math.Vector2(0, 0)
+
+  point_speed_px_per_sec = distance_error + 100
+
+  point1.x -= p1_maximizer_vector_normalized.x * clock.DELTA_TIME_IN_SECONDS * point_speed_px_per_sec 
+  point1.y -= p1_maximizer_vector_normalized.y * clock.DELTA_TIME_IN_SECONDS * point_speed_px_per_sec  
+
+  point2.x -=  p2_maximizer_vector_normalized.x * clock.DELTA_TIME_IN_SECONDS * point_speed_px_per_sec
+  point2.y -=  p2_maximizer_vector_normalized.y * clock.DELTA_TIME_IN_SECONDS * point_speed_px_per_sec
+#+end_src
+

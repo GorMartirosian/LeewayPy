@@ -13,13 +13,14 @@ def distance_constraint(point1: Point,
                         demanded_distance, 
                         tolerance=2): # distance in pixel values
     """Ensure the distance between two points is equal to a specified value."""
+
     actual_distance = distance(point1, point2)
     error = abs(actual_distance - demanded_distance)
 
     p1_to_p2_vector = pygame.math.Vector2(point2.x - point1.x, point2.y - point1.y)
     p1_to_p2_vector_normalized = p1_to_p2_vector.normalize() 
-    point_speed_px_per_s = error + 100 # TODO: find flexible way to set the speed
-    seconds_since_last_frame = clock.DELTA_TIME 
+    point_speed_px_per_s = error + 200 # TODO: find flexible way to set the speed
+    seconds_since_last_frame = clock.DELTA_TIME_IN_SECONDS 
 
     if error > tolerance:
         if actual_distance > demanded_distance:
@@ -44,11 +45,12 @@ def fix_point_constraint(point: Point, fixed_phantom_point: Optional[Point] = No
     point.isFixed = True
 
 
-def angle_between_segments_constraint(segment: Segment, 
-                                                angleDegree: float, 
+def angle_between_segments_constraint(segment1: Segment, 
+                                      segment2: Segment,
+                                       angleDegree: float, 
                                                 tolerance=2):
     """Keep the segment at a specific angle with respect to the horizon. Angle is in degrees."""
-    pass
+    
 
     
 def fix_segment_constraint(segment: Segment, 
